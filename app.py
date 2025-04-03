@@ -13,20 +13,20 @@ def chat():
     messages = request.json.get('messages', [])
 
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer " + OPENROUTER_API_KEY,
         "Content-Type": "application/json"
     }
 
     data = {
-        "model": "openai/gpt-3.5-turbo",  # or another OpenRouter-supported model
+        "model": "openai/gpt-3.5-turbo",  # or try "mistralai/mixtral-8x7b-instruct" etc.
         "messages": messages
     }
 
     try:
-        response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
-        response.raise_for_status()
-        reply = response.json()["choices"][0]["message"]["content"]
-        return jsonify({ "reply": reply })
+        res = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
+        res.raise_for_status()
+        reply = res.json()["choices"][0]["message"]["content"]
+        return jsonify({"reply": reply})
     except Exception as e:
         print("Error:", e)
-        return jsonify({ "reply": "Something went wrong talking to Ai." })
+        return jsonify({"reply": "Error contacting Ai: " + str(e)})
